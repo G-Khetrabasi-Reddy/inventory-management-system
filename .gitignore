@@ -42,3 +42,7 @@ frontend/build/
 
 # OS files
 .DS_Store
+
+# Secrets — never commit local credentials
+application-local.properties
+src/main/resources/application-local.properties

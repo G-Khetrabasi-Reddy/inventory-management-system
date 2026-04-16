@@ -3,5 +3,8 @@ package com.inventory.enums;
 public enum MovementType {
     IN,
     OUT,
-    TRANSFER
+    TRANSFER,
+    RESERVE,
+    DISPATCH,
+    ON_ORDER
 }

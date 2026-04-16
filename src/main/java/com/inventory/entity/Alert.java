@@ -1,26 +1,28 @@
 package com.inventory.entity;
 
 import com.inventory.enums.AlertType;
+import com.inventory.enums.Priority;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "alerts")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Alert {
+public class Alert extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long alertId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
@@ -32,14 +34,14 @@ public class Alert {
     private Integer thresholdValue;   // e.g., reorder level
     private Integer currentValue;     // current stock
 
-    private String priority;          // LOW / MEDIUM / HIGH
+    @Enumerated(EnumType.STRING)
+    private Priority priority;          // LOW / MEDIUM / HIGH
 
     private Boolean isResolved = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resolved_by")
     private User resolvedBy;
 
-    private LocalDateTime createdAt;
     private LocalDateTime resolvedAt;
 }

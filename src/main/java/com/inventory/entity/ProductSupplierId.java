@@ -1,17 +1,18 @@
 package com.inventory.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data // Generates equals() and hashCode() which are REQUIRED for IdClasses
-@NoArgsConstructor // REQUIRED by JPA
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
-public class ProductSupplierId implements Serializable { // MUST implement Serializable
+@EqualsAndHashCode
+public class ProductSupplierId implements Serializable {
 
-    private Long product;
-    private Long supplier;
+    private static final long serialVersionUID = 1L;
 
+    private Long productId;
+    private Long supplierId;
 }

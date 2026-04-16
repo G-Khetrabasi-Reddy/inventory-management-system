@@ -1,35 +1,55 @@
 package com.inventory.entity;
 
+import com.inventory.enums.ReportType;
+import com.inventory.enums.StorageType;
 import jakarta.persistence.*;
 import lombok.*;
+
+import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reports")
-@Data
+@Table(name = "reports",
+        indexes = {
+                @Index(name = "idx_report_type", columnList = "reportType"),
+                @Index(name = "idx_report_user", columnList = "generated_by")
+        })
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Report {
+public class Report implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reportId;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Column(nullable = false, length = 150)
     private String reportName;
 
-    private String reportType;   // SALES / PURCHASE / INVENTORY
+    @Enumerated(EnumType.STRING)
+    private ReportType reportType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generated_by")
     private User generatedBy;
 
     private LocalDateTime generatedAt;
 
     @Column(columnDefinition = "TEXT")
-    private String parameters;   // JSON string (filters, date range)
+    private String parameters;
 
-    private String storageType;  // FILE / DB
+    @Enumerated(EnumType.STRING)
+    private StorageType storageType;
 
-    private String storageUrl;   // file path or cloud URL
+    @Column(length = 500)
+    private String storageUrl;
+
+    @PrePersist
+    protected void onCreate() {
+        generatedAt = LocalDateTime.now();
+    }
 }

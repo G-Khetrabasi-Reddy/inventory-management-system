@@ -1,13 +1,23 @@
 package com.inventory.entity;
 
+import com.inventory.enums.PaymentMethod;
+import com.inventory.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "payments")
-@Data
+@Table(name = "payments",
+        indexes = {
+                @Index(name = "idx_payment_invoice", columnList = "invoice_id")
+        })
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payment {
@@ -16,15 +26,29 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "so_id", nullable = false)
+    private SalesOrder salesOrder;
+
+    @NotNull
+    @DecimalMin("0.0")
+    @Column(precision = 12, scale = 2)
     private BigDecimal amountPaid;
 
-    private String paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
     private LocalDate paymentDate;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
+
+    @PrePersist
+    protected void onCreate() {
+        paymentDate = LocalDate.now();
+    }
 }

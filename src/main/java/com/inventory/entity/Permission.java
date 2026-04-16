@@ -1,22 +1,29 @@
 package com.inventory.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 
 @Entity
-@Table(name = "permissions")
-@Data
+@Table(name = "permissions",
+        indexes = @Index(name = "idx_permission_name", columnList = "permissionName"))
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Permission {
+public class Permission extends BaseEntity implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long permissionId;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank
+    @Column(nullable = false, unique = true, length = 100)
     private String permissionName;
 
+    @Column(length = 255)
     private String description;
 }

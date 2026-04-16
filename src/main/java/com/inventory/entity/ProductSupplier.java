@@ -1,35 +1,54 @@
 package com.inventory.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.DecimalMin;
+import lombok.*;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "product_supplier")
-@Data
+@Table(name = "product_supplier",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"product_id", "supplier_id"})
+        },
+        indexes = {
+                @Index(name = "idx_ps_product", columnList = "product_id"),
+                @Index(name = "idx_ps_supplier", columnList = "supplier_id")
+        })
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(ProductSupplierId.class)
-public class ProductSupplier { //PRODUCT_SUPPLIER (JOIN ENTITY)
+public class ProductSupplier {
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "supplier_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
+    @Column(length = 100)
     private String supplierProductCode;
 
-    private Double unitCost;
+    @DecimalMin("0.0")
+    @Column(precision = 12, scale = 2)
+    private BigDecimal unitCost;
 
+    @NotNull
+    @Min(0)
     private Integer leadTimeDays;
 
-    private Boolean isPreferred;
+    @Column(nullable = false)
+    private Boolean isPreferred = false;
 
+    @Column(nullable = false)
     private Boolean isActive = true;
 }
